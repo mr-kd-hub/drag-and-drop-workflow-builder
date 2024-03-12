@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import ReactFlow, {
   addEdge,
   applyEdgeChanges,
@@ -13,23 +13,30 @@ import {
   useEdgesState,
 } from "reactflow";
 import FileUpload from "../components/FileUpload";
-
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store/reducer";
+import {addNodeAction} from "../store/action"
 const minimapStyle = {
     height: 120,
   };
   
-const rfStyle = {
-  backgroundColor: "#B8CEFF",
-};
+// const rfStyle = {
+//   backgroundColor: "#B8CEFF",
+// };
 const nodeTypes = { FileUpload: FileUpload };
 function Workflow() {
-  const initialNodes = [
-    { id: "node-1", type: "FileUpload", position: { x: 0, y: 0 }, data: {} },
-    { id: "node-2", type: "FileUpload", position: { x: 0, y: 0 }, data: {} },
-  ];
-  const [nodes, setNodes] = useState<any>(initialNodes);
-  const [edges, setEdges] = useState<any>([]);
 
+  const node = useSelector((state:RootState) => state.slice.node)
+  const edge = useSelector((state:RootState) => state.slice.edges)
+  const dispatch = useDispatch()
+  const [nodes, setNodes] = useState<any>(node);
+  const [edges, setEdges] = useState<any>(edge);
+
+  useEffect(()=>{
+    if(node.length) setNodes(node)
+    if(edge.length) setEdges(edge)
+  },[node,edge])
+  
   const onNodesChange = useCallback(
     (changes: any) => setNodes((nds: any) => applyNodeChanges(changes, nds)),
     [setNodes]
@@ -45,23 +52,28 @@ function Workflow() {
   const onInit = (reactFlowInstance:any) => console.log('flow loaded:', reactFlowInstance);
 
   return (
-    <div style={{ height: "100vh", width: "100-vh" }} className="w-full h-full">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        onInit={onInit}
-        attributionPosition="top-right"
+    <>
+      <div
+        style={{ height: "100vh", width: "100vh" }}
+        className="w-full h-[75%]"
       >
-        <MiniMap style={minimapStyle} zoomable pannable />
-        <Controls />
-        <Background color="#aaa" gap={16} />
-      </ReactFlow>
-    </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          onInit={onInit}
+          attributionPosition="top-right"
+        >
+          <MiniMap style={minimapStyle} zoomable pannable />
+          <Controls />
+          <Background color="#aaa" gap={16} />
+        </ReactFlow>
+      </div>
+    </>
   );
 }
 

@@ -1,6 +1,16 @@
+import { Handle, Position } from "reactflow";
+
 function FileUpload() {
   return (
     <div className="border-1 rounded p-16 bg-slate-500">
+      <Handle
+        key={`buttonanswer`}
+        // id={.id}
+        type="source"
+        position={Position.Right}
+        className="right-connection"
+      />
+
       <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
         Upload file
       </label>
