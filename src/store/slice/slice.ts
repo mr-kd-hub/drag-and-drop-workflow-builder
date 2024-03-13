@@ -1,16 +1,25 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { MarkerType, Position } from "reactflow";
-import { generateRandom } from "../../utils";
+import { generateRandom, snachbar_I } from "../../utils";
+import { RootState } from "../reducer";
 export type ReducerType = {
   flowName:string,
   node: any[],
   edges: any[],
-  open: boolean,
+  columns: string[],
+  rows:any[],
+  snackbar:snachbar_I
 }
 let initialState:ReducerType = {
   flowName:"",
-  open:false,
   node: [],
+  columns:[],
+  rows:[],
+  snackbar:{
+    open:false,
+    message:"",
+    variant:"information"
+  },
   // [
   //   {
   //     id: "1",
@@ -89,10 +98,7 @@ let initialState:ReducerType = {
   //     position: { x: 150, y: 400 },
   //   },
   // ],
-  /* The `// edges:` line is a commented-out section of code in the TypeScript file. It appears to be a
-  placeholder for defining an array of edge objects in the initial state of the reducer. Edges are
-  typically used in graph-based data structures to represent connections between nodes. */
-  edges: [] 
+  edges: [],
   // [
   //   { id: "e1-2", source: "1", target: "2", label: "this is an edge label" },
   //   { id: "e1-3", source: "1", target: "3", animated: true },
@@ -129,9 +135,12 @@ const slice = createSlice({
   initialState: initialState,
   reducers: {
     addNode: (state, action: PayloadAction<any>) => void(state.node = action.payload),
-    // toggleModel: (state, action: PayloadAction<any>) => state.open = action.payload,
+    getColumns: (state:any, action: PayloadAction<string[]>) => void(state.columns = action.payload),
+    getRows: (state:any, action: PayloadAction<any[]>) => void(state.rows = action.payload),
+    showMessage:(state:any, action:PayloadAction<snachbar_I>) => void(state.snackbar = action.payload),
+    hideMessage:(state:any, action:PayloadAction<snachbar_I>) => void(state.snackbar = action.payload)
   },
 });
-export const { addNode } = slice.actions
+export const { addNode, getColumns, getRows, showMessage, hideMessage } = slice.actions
 
 export default slice.reducer;

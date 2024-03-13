@@ -54,8 +54,8 @@ function Workflow() {
   return (
     <>
       <div
-        style={{ height: "100vh", width: "100vh" }}
-        className="w-full h-[75%]"
+        style={{ height: "calc(100vh - 85px)" }}
+        className="w-full h-[75%] border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"
       >
         <ReactFlow
           nodes={nodes}
