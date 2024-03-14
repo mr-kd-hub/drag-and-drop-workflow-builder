@@ -1,7 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { MarkerType, Position } from "reactflow";
-import { generateRandom, snachbar_I } from "../../utils";
-import { RootState } from "../reducer";
+import { snachbar_I } from "../../utils";
 export type ReducerType = {
   flowName:string,
   node: any[],
@@ -134,13 +132,26 @@ const slice = createSlice({
   name: "test",
   initialState: initialState,
   reducers: {
-    addNode: (state, action: PayloadAction<any>) => void(state.node = action.payload),
-    getColumns: (state:any, action: PayloadAction<string[]>) => void(state.columns = action.payload),
-    getRows: (state:any, action: PayloadAction<any[]>) => void(state.rows = action.payload),
-    showMessage:(state:any, action:PayloadAction<snachbar_I>) => void(state.snackbar = action.payload),
-    hideMessage:(state:any, action:PayloadAction<snachbar_I>) => void(state.snackbar = action.payload)
+    addNode: (state, action: PayloadAction<any>) =>
+      void (state.node = action.payload),
+    getColumns: (state: any, action: PayloadAction<string[]>) =>
+      void (state.columns = action.payload),
+    getRows: (state: any, action: PayloadAction<any[]>) =>
+      void (state.rows = action.payload),
+    showMessage: (state: any, action: PayloadAction<snachbar_I>) =>
+      void (state.snackbar = action.payload),
+    hideMessage: (state: any, action: PayloadAction<any>) =>
+      void (state.snackbar = action.payload),
+    addEdge: (state: any, action: PayloadAction<any>) =>
+      void (state.edges = action.payload),
+    updateNode: (state: any, action: PayloadAction<any>) =>
+      void (state.node = action.payload),
+    removeNode: (state: any, action: PayloadAction<any>) => {
+      state.node = action.payload.nodes;
+      state.edges = action.payload.edges;
+    },
   },
 });
-export const { addNode, getColumns, getRows, showMessage, hideMessage } = slice.actions
+export const { addNode, getColumns, getRows, showMessage, hideMessage, addEdge,updateNode,removeNode } = slice.actions
 
 export default slice.reducer;

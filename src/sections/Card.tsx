@@ -8,14 +8,16 @@ import Typography from "@mui/material/Typography";
 import { addNodeAction } from "../store/action";
 import { useDispatch } from "react-redux";
 interface Props_I {
-  description: string;
+  description?: string;
   id: string;
   name: string;
   handleClose:()=>void;
 }
 function CardComponent(props: Props_I) {
-  const { description, id, name, handleClose } = props;
+  const { id, name, handleClose } = props;
   const dispatch = useDispatch();
+  console.log("id0",id);
+  
   return (
     <Card
       onClick={() => {
@@ -28,9 +30,6 @@ function CardComponent(props: Props_I) {
       <CardContent>
         <Typography variant="h5" component="div" color="text.secondary">
           {name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {description}
         </Typography>
       </CardContent>
     </Card>

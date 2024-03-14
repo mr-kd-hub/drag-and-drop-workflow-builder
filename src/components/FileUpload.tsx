@@ -5,8 +5,9 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { parse } from "papaparse";
 import { useDispatch, useSelector } from "react-redux";
-import { getColumnsAction, getRowsAction, showMessageAction } from "../store/action";
-
+import { getColumnsAction, getRowsAction, removeNodeAction, showMessageAction } from "../store/action";
+import { Typography } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -18,7 +19,7 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-function FileUpload() {
+function FileUpload({data}:any) {
   // const columns = useSelector((state:RootState) => state.slice.columns)
   // const rows = useSelector((state:RootState) => state.slice.rows)
   const dispatch = useDispatch();
@@ -55,6 +56,9 @@ function FileUpload() {
       });
     }
   };
+  const removeNodeControl = async () => {
+    await dispatch(removeNodeAction('FileUpload', data.nodeId));
+  }
   return (
     <div className="border-1 flex flex-col gap-14 rounded p-16 bg-emerald-300">
       <Handle
@@ -63,6 +67,10 @@ function FileUpload() {
         position={Position.Right}
         className="right-connection"
       />
+      <div onClick={() => removeNodeControl()} className="flex w-full items-center">
+        <DeleteIcon />
+        <Typography className="ml-8">Delete</Typography>
+      </div>
       <Button
         component="label"
         role={undefined}

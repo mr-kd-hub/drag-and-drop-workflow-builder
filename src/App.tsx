@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 function App() {
   return (
     <Provider store={store}>
-      <div className="h-full">
+      <div className="h-full pt-4 pr-4 pl-4">
         <SideBar>
           <div className="h-[50%] w-full">
             <Workflow />

@@ -47,7 +47,7 @@ export default function SideBar(props: any) {
           </svg>
           <span className="ms-3">Block</span>
         </Button>
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        {/* <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
             <li>
               <button
@@ -247,7 +247,7 @@ export default function SideBar(props: any) {
               </a>
             </li>
           </ul>
-        </div>
+        </div> */}
       </aside>
 
       <div className="p-4 w-full h-full">
