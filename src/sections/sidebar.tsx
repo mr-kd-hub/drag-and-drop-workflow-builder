@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { addNodeAction, hideMessageAction } from "../store/action";
+import { useState, useEffect } from "react";
+import { getWorkflow, hideMessageAction, saveAction } from "../store/action";
 import { useDispatch, useSelector } from "react-redux";
 import Snackbar from "@mui/material/Snackbar";
 import { RootState } from "../store/reducer";
 import { Button } from "@mui/material";
 import Model from "./Model";
+import { Preview } from "@mui/icons-material";
 interface State_I {
   openDialog: boolean;
+  savedFlows: any[];
 }
 export default function SideBar(props: any) {
   const dispatch = useDispatch();
@@ -17,11 +19,18 @@ export default function SideBar(props: any) {
 
   const [state, setState] = useState<State_I>({
     openDialog: false,
+    savedFlows: [],
   });
-  const { openDialog } = state;
+  const { openDialog, savedFlows } = state;
   const toggleDialog = () => {
     setState((prev) => ({ ...prev, openDialog: !prev.openDialog }));
   };
+
+  useEffect(() => {
+    const flows: any = dispatch(getWorkflow());
+    setState((Prev) => ({ ...Prev, savedFlows: flows }));
+  }, [dispatch]);
+
   return (
     <div className="flex w-full h-full">
       <aside
@@ -47,6 +56,40 @@ export default function SideBar(props: any) {
           </svg>
           <span className="ms-3">Block</span>
         </Button>
+        <Button
+          type="button"
+          // onClick={() => dispatch(addNodeAction("FileUpload"))}
+          onClick={saveAction}
+          className="flex justify-center w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+        >
+          <svg
+            className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 18 16"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"
+            />
+          </svg>
+          <span className="ms-3">Save</span>
+        </Button>
+        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800"></div>
+        {savedFlows.length
+          ? savedFlows.map((flow) => {
+              return (
+                <ul className="space-y-2 font-medium">
+                  <li>{flow.flowName}</li>
+                </ul>
+              );
+            })
+          : "No Flow saved"}
+        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800"></div>
         {/* <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
             <li>
@@ -251,9 +294,7 @@ export default function SideBar(props: any) {
       </aside>
 
       <div className="p-4 w-full h-full">
-        <div className="p-1 h-full w-full">
-          {props.children}
-        </div>
+        <div className="p-1 h-full w-full">{props.children}</div>
       </div>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}

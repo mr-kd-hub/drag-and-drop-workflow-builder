@@ -7,6 +7,7 @@ import {
   getRows,
   hideMessage,
   removeNode,
+  saveWorkflow,
   showMessage,
   updateNode,
 } from "./slice/slice";
@@ -17,9 +18,9 @@ export const addNodeAction = (nodeType: any): any => {
   return (dispatch: AppDispatch, getState: any) => {
     const currentState: RootState = getState();
     let node = currentState.slice.node;
-    let nodeId = uuid()//Number(node?.[node?.length - 1]) + 1;
+    let nodeId = uuid(); //Number(node?.[node?.length - 1]) + 1;
     let nodeDataIndex = Number(node?.[node?.length - 1]) + 1 || 0;
-    
+
     if (!node)
       node = [
         {
@@ -84,57 +85,104 @@ export const hideMessageAction = (): any => {
   };
 };
 
-
 export const addEdgeAction = (newEdge: any): any => {
-  return async (dispatch: AppDispatch,getState:any) => {
+  return async (dispatch: AppDispatch, getState: any) => {
     // let { edges } = state;
-      // let { newEdge } = action.payload;
-      const currentState: RootState = getState();
-      let edges = currentState.slice.edges;
-      let edgeId = (edges?.[edges?.length - 1]?.id + 1 || 0);
+    // let { newEdge } = action.payload;
+    const currentState: RootState = getState();
+    let edges = currentState.slice.edges;
+    let edgeId = edges?.[edges?.length - 1]?.id + 1 || 0;
 
-      if (!edges)
-        edges = [{ id: edgeId, ...newEdge }]
-      else {
+    if (!edges) edges = [{ id: edgeId, ...newEdge }];
+    else {
+      if (
+        newEdge.source === newEdge.target ||
+        newEdge.sourceHandle === newEdge.target
+      )
+        return dispatch(addEdge(edges));
 
-        if ((newEdge.source === newEdge.target) || (newEdge.sourceHandle === newEdge.target))
-          return dispatch(addEdge(edges))
-
-        if (newEdge?.sourceHandle) {
-          if (edges?.filter(edge => ((edge.sourceHandle === newEdge.sourceHandle && edge.target === newEdge.target) || edge.sourceHandle === newEdge.sourceHandle))?.length !== 0)
-            return dispatch(addEdge(edges))
-        }
-        else {
-          if (edges?.filter(edge => ((edge.source === newEdge.source && edge.target === newEdge.target) || edge.source === newEdge.source))?.length !== 0)
-            return dispatch(addEdge(edges))
-        }
-
-        edges = [...edges, { id: edgeId, ...newEdge }]
+      if (newEdge?.sourceHandle) {
+        if (
+          edges?.filter(
+            (edge) =>
+              (edge.sourceHandle === newEdge.sourceHandle &&
+                edge.target === newEdge.target) ||
+              edge.sourceHandle === newEdge.sourceHandle
+          )?.length !== 0
+        )
+          return dispatch(addEdge(edges));
+      } else {
+        if (
+          edges?.filter(
+            (edge) =>
+              (edge.source === newEdge.source &&
+                edge.target === newEdge.target) ||
+              edge.source === newEdge.source
+          )?.length !== 0
+        )
+          return dispatch(addEdge(edges));
       }
-      console.log("edges-----",edges);
-      
+
+      edges = [...edges, { id: edgeId, ...newEdge }];
+    }
+    console.log("edges-----", edges);
+
     dispatch(addEdge(edges));
   };
 };
 
-export const updateNodeAction = (updatednode:any):any => {
-  return async (dispatch:AppDispatch,getState:any) =>{
+export const updateNodeAction = (updatednode: any): any => {
+  return async (dispatch: AppDispatch, getState: any) => {
     const currentState: RootState = getState();
     let nodes = currentState.slice.node;
-    nodes = nodes?.map((obj) => obj.id === updatednode.id ? { ...obj, position: updatednode.position } : obj);
+    nodes = nodes?.map((obj) =>
+      obj.id === updatednode.id
+        ? { ...obj, position: updatednode.position }
+        : obj
+    );
     dispatch(updateNode(nodes));
-  }
+  };
 };
 
-export const removeNodeAction = (nodeType:string, cardIndex:number):any => {
-  return (dispatch:AppDispatch,getState:any) => {
+export const removeNodeAction = (nodeType: string, cardIndex: number): any => {
+  return (dispatch: AppDispatch, getState: any) => {
     const currentState: RootState = getState();
     let edges = currentState.slice.edges;
     let nodes = currentState.slice.node;
-    let deletedNodeId:any = nodes?.filter((obj) => obj.data.nodeId === cardIndex)?.[0]?.id;
-    
-    edges = edges?.filter((obj) => !(obj.source === deletedNodeId || obj.target === deletedNodeId));
+    let deletedNodeId: any = nodes?.filter(
+      (obj) => obj.data.nodeId === cardIndex
+    )?.[0]?.id;
+
+    edges = edges?.filter(
+      (obj) => !(obj.source === deletedNodeId || obj.target === deletedNodeId)
+    );
     nodes = nodes?.filter((obj) => obj.data.nodeId !== cardIndex);
     dispatch(removeNode({ nodes, edges }));
+  };
+};
+
+export const saveAction = (): any => {
+  return async (dispatch: AppDispatch, getState: any) => {
+    const currentState: RootState = getState();
+    let edges = currentState.slice.edges;
+    let nodes = currentState.slice.node;
+    let flowName = currentState.slice.flowName;
+
+    let data: { flowName: string; nodes: object[]; edges: object[] } = {
+      flowName,
+      nodes,
+      edges,
+    };
+    let savedFlows: any = localStorage.getItem("flow");
+    localStorage.setItem("flow", JSON.stringify([...savedFlows, { ...data }]));
+    dispatch(saveWorkflow([...savedFlows, { ...data }]))
+  };
+};
+
+export const getWorkflow = ():any => {
+  return (dispatch:AppDispatch,getState:any) => {
+    let savedFlows: any = localStorage.getItem("flow");
+    if(!savedFlows) return []
+    return JSON.parse(savedFlows)
   }
 }

@@ -1,21 +1,19 @@
-import { useState, useCallback, useEffect } from "react";
+import {  useCallback, useEffect } from "react";
 import ReactFlow, {
   addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
+  useEdgesState, useNodesState
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {
   MiniMap,
   Controls,
   Background,
-  MarkerType,
 } from "reactflow";
 import FileUpload from "../components/FileUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/reducer";
 import {
-  addEdgeAction,
+  // addEdgeAction,
   updateNodeAction,
 } from "../store/action";
 import Filter from "../components/Filter";
@@ -53,39 +51,44 @@ function Workflow() {
   console.log("node", node);
   console.log("defaultEdges", defaultEdges);
 
-  const [nodes, setNodes] = useState<any>(node);
-  const [edges, setEdges] = useState<any>(defaultEdges);
+  // const [nodes, setNodes] = useState<any>(node);
+  // const [edges, setEdges] = useState<any>(defaultEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState(node);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(defaultEdges);
+
 console.log("edges",edges);
 
   useEffect(() => {
     if (node) setNodes(node);
-    if (defaultEdges) setEdges(defaultEdges);
-  }, [node, defaultEdges]);
+    // if (defaultEdges) setEdges(defaultEdges);
+  }, [node, defaultEdges, setEdges, setNodes]);
 
-  useEffect(() => {
-    setEdges(
-      defaultEdges?.map((edge) => ({
-        ...edge,
-        type: "custom",
-        animated: true,
-        markerEnd: { type: MarkerType.ArrowClosed },
-        width: 40,
-      }))
-    );
-  }, [defaultEdges]);
+  // useEffect(() => {
+  //   setEdges(
+  //     defaultEdges?.map((edge) => ({
+  //       ...edge,
+  //       type: "custom",
+  //       animated: true,
+  //       markerEnd: { type: MarkerType.ArrowClosed },
+  //       width: 40,
+  //     }))
+  //   );
+  // }, [defaultEdges,setEdges]);
 
-  const onNodesChange = useCallback(
-    (changes: any) => setNodes((nds: any) => applyNodeChanges(changes, nds)),
-    [setNodes]
-  );
-  const onEdgesChange = useCallback(
-    (changes: any) => setEdges((eds: any) => applyEdgeChanges(changes, eds)),
+  // const onNodesChange = useCallback(
+  //   (changes: any) => setNodes((nds: any) => applyNodeChanges(changes, nds)),
+  //   [setNodes]
+  // );
+  // const onEdgesChange = useCallback(
+  //   (changes: any) => setEdges((eds: any) => applyEdgeChanges(changes, eds)),
+  //   [setEdges]
+  // );
+
+  const onConnect = useCallback(
+    (connection:any) => setEdges((eds:any) => addEdge(connection, eds)),
     [setEdges]
   );
 
-  const onConnect = useCallback(async (params: any) => {
-    await addEdge(params,edges);
-  }, []);
   const onInit = (reactFlowInstance: any) =>
     console.log("flow loaded:", reactFlowInstance);
 
@@ -95,7 +98,7 @@ console.log("edges",edges);
   return (
     <>
       <div
-        style={{ height: "calc(100vh - 85px)" }}
+        style={{ height: "calc(100vh - 50vh)" }}
         className="w-full h-[75%] border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700"
       >
         <ReactFlow

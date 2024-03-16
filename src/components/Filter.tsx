@@ -1,15 +1,14 @@
 import { Autocomplete, Button, TextField, Typography } from "@mui/material";
-import React from "react";
 import { Handle, Position } from "reactflow";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { removeNodeAction } from "../store/action";
 import { useDispatch, useSelector } from "react-redux";
-import { CONDITIONS, condition } from "../utils";
+import { condition } from "../utils";
 import { RootState } from "../store/reducer";
 
 function Filter({data}:any) {
   const dispatch = useDispatch();
-  const rows = useSelector((state:RootState) => state.slice.rows)
+  // const rows = useSelector((state:RootState) => state.slice.rows)
   const columns = useSelector((state:RootState) => state.slice.columns)
 
   console.log("data",data);
@@ -18,9 +17,10 @@ function Filter({data}:any) {
  name) and a `condition` (such as "equals", "contains", etc.). It then uses the `rows` array from
  the Redux state and filters it based on the provided `key` and `condition` using the `CONDITIONS`
  function from the `utils` file. */
-  const handleRun = (key:string, condition:string) => {
-    return rows.filter(item=> CONDITIONS(condition,key,item))
-  };
+
+  // const handleRun = (key:string, condition:string) => {
+  //   return rows.filter(item=> CONDITIONS(condition,key,item))
+  // };
   const removeNodeControl = async() => {
     await dispatch(removeNodeAction('filter', data.nodeId));
   }

@@ -9,11 +9,13 @@ function App() {
     <Provider store={store}>
       <div className="h-full pt-4 pr-4 pl-4">
         <SideBar>
-          <div className="h-[50%] w-full">
-            <Workflow />
-          </div>
-          <div className="h-[50%] w-full">
-            <Output />
+          <div className="flex flex-col h-full gap-4 overflow-scroll">
+            <div className="h-full w-full">
+              <Workflow />
+            </div>
+            <div className="h-full w-full border-dashed border-gray-600 rounded-lg">
+              <Output />
+            </div>
           </div>
         </SideBar>
       </div>
